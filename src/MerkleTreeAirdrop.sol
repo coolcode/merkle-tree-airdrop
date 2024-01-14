@@ -3,17 +3,17 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-contract MerkleTreeAirdrop {
-    // --- PROPERTIES ---- //
-
-    // Calculated from `merkle_tree.js`
-    bytes32 public merkleRoot = 0x2e35b61278fbcec3f3b0bb361d928e373e089a61758af09690ce0a5391078ff2;
+contract MerkleTreeAirdrop { 
+    bytes32 public merkleRoot;
 
     mapping(address => bool) public claimed;
 
-    // --- FUNCTIONS ---- //
+    // only owner
+    function commit(bytes32 _root) external {
+        merkleRoot = _root;
+    }
 
-    function claim(bytes32[] calldata _merkleProof) public {
+    function claim(bytes32[] calldata _merkleProof) external {
         require(!claimed[msg.sender], "Address already claimed");
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
         require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Invalid Merkle Proof.");
